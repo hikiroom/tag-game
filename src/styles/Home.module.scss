@@ -1,0 +1,90 @@
+@use './mixin.scss';
+
+.container {
+    padding: 40px 20px 20px;
+
+    > *:not(:first-child) {
+        margin-top: 46px;
+
+        @include mixin.mediaMin {
+            margin-top: 64px;
+        }
+    }
+}
+.hdgLv1 {
+    font-size: 22px;
+    text-align: center;
+    margin: 0;
+
+    @include mixin.mediaMin {
+        font-size: 32px;
+    }
+}
+.hdgLv2 {
+    font-size: 18px;
+    margin: 0;
+
+    @include mixin.mediaMin {
+        font-size: 22px;
+    }
+}
+.icon {
+    font-size: 80px;
+    text-align: center;
+
+    @include mixin.mediaMin {
+        font-size: 104px;
+    }
+}
+.startBtn {
+    display: block;
+    background: #0277BD;
+    color: #ffffff;
+    padding: 8px;
+    max-width: 200px;
+    text-align: center;
+    border-radius: 10px;
+    margin: 0 auto;
+    font-size: 14px;
+
+    @include mixin.mediaMin {
+        max-width: 240px;
+        font-size: 22px;
+    }
+}
+.section {
+    p {
+        font-size: 14px;
+        @include mixin.mediaMin {
+            font-size: 16px;
+        }
+
+        em {
+            color: #E65100;
+        }
+        small {
+            color: #757575;
+            font-size: 12px;
+
+            span {
+                margin-right: 4px;
+            }
+        }
+    }
+    > *:not(:first-child) {
+        margin-top: 24px;
+    }
+}
+.ranking {
+    padding-left: 2em;
+}
+.footer {
+    padding: 20px;
+    p {
+        text-align: center;
+        small {
+            color: #757575;
+            font-size: 12px;
+        }
+    }
+}
