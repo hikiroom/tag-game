@@ -4,20 +4,7 @@ import Link from 'next/link';
 import useRanking from '@/hooks/useRanking';
 
 const Home = () => {
-    // @TODO fbの取得に切り替える
-    // const ranking = useRanking();
-    const ranking = [
-        {name: '🤓', time: 100},
-        {name: '🥲', time: 100},
-        {name: '🥺', time: 100},
-        {name: '🥲', time: 100},
-        {name: '😇', time: 100},
-        {name: '😌', time: 100},
-        {name: '😚', time: 100},
-        {name: '😚', time: 100},
-        {name: '😣', time: 100},
-        {name: '🤬', time: 100},
-    ];
+    const ranking = useRanking();
 
     return (
         <>
