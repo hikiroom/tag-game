@@ -1,3 +1,5 @@
+export const WALL = 0;
+export const HAVE_BEEN_TO = 100;
 export const firstArea: ArrayMap = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -12,7 +14,7 @@ export const firstArea: ArrayMap = [
 ];
 export const firstAreaInfo: ArrayMapInfo[] = [
     {
-        id: 0,
+        id: WALL,
         name: 'wall',
         color: '#9d9d9d',
     },
@@ -22,3 +24,4 @@ export const firstAreaInfo: ArrayMapInfo[] = [
         color: '#efefef',
     },
 ];
+export const firstAreaSafeId = [1];

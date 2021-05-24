@@ -3,11 +3,10 @@ import styles from '@/styles/Game.module.scss'
 import Link from 'next/link';
 import db from '@/utils/firebase';
 import { useState, useEffect, useRef } from 'react';
-import { getRandomName, getDistance, cutArrayMap } from '@/utils/common';
+import { getRandomName, getDistance } from '@/utils/common';
 import { Map } from '@/utils/map';
-import { Player } from '@/utils/player';
-import { Enemy } from '@/utils/enemy';
-import { firstArea, firstAreaInfo } from '@/constants/map';
+import { Character, Controller } from '@/utils/character';
+import { firstArea, firstAreaInfo, firstAreaSafeId } from '@/constants/map';
 
 const Game = () => {
     const app = useRef<HTMLCanvasElement>(null);
@@ -28,111 +27,53 @@ const Game = () => {
         app.current.height = windowInnerHeight;
         app.current.width = cellSize * 7;
 
-        const player = new Player(getRandomName(), cellSize, [1, 0]);
-        const enemy = new Enemy('👹', cellSize, [1, 2]);
+        const player = new Character(getRandomName(), cellSize, [1, 0]);
+        const enemy = new Character('👹', cellSize, [1, 2]);
+        const enemy2 = new Character('🤡', cellSize, [8, 9]);
         const map = new Map(firstArea, cellSize, firstAreaInfo);
         const mapRange: MapRange = [Math.trunc(windowInnerHeight / cellSize / 2), 3];
-        const pseudoPlayerPosition: Position = [mapRange[0] * cellSize, mapRange[1] * cellSize];
-        const pseudoEnemyDistance: Position = getDistance(player.position, enemy.position, mapRange);
-        const pseudoEnemyPosition: Position = [pseudoEnemyDistance[0] * cellSize, pseudoEnemyDistance[1] * cellSize];
+        const playerController = new Controller(player, [player, enemy, enemy2], map);
+        
+        playerController.setControlEvent();
 
-        map.render(appCtx, cutArrayMap(map.array, player.position, mapRange));
-        player.render(appCtx, pseudoPlayerPosition);
-        enemy.render(appCtx, pseudoEnemyPosition);
-
-        // @TODO コントローラー作成
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowUp') {
-                const id = map.getArrayMapIdWithPosition([player.position[0] - 1, player.position[1]]);
-
-                if (id > 0) {
-                    player.position[0]--;
-                }
-            } else if (e.key === 'ArrowDown') {
-                const id = map.getArrayMapIdWithPosition([player.position[0] + 1, player.position[1]]);
-
-                if (id > 0) {
-                    player.position[0]++;
-                }
-            } else if (e.key === 'ArrowLeft') {
-                const id = map.getArrayMapIdWithPosition([player.position[0], player.position[1] - 1]);
-
-                if (id > 0) {
-                    player.position[1]--;
-                }
-            } else if (e.key === 'ArrowRight') {
-                const id = map.getArrayMapIdWithPosition([player.position[0], player.position[1] + 1]);
-
-                if (id > 0) {
-                    player.position[1]++;
-                }
-            } else if (e.key === 'w') {
-                const [y, x] = player.position;
-
-                if (y === 0) {
-                    const newWall = Array(map.array[y].length).fill(0);
-                    newWall[x] = 1;
-
-                    map.array.unshift(newWall);
-
-                    player.position[0]++;
-                    enemy.position[0]++;
-                } else {
-                    map.array[y - 1][x] = 1;
-                }
-            } else if (e.key === 'a') {
-                const [y, x] = player.position;
-
-                if (x === 0) {
-                    for (let i = map.array.length; i--;) {
-                        if (i === player.position[0]) {
-                            map.array[i].unshift(1);
-                        } else {
-                            map.array[i].unshift(0);
-                        }
-                    }
-
-                    player.position[1]++;
-                    enemy.position[1]++;
-                } else {
-                    map.array[y][x - 1] = 1;
-                }
-            } else if (e.key === 's') {
-                const [y, x] = player.position;
-
-                if (y === map.array.length - 1) {
-                    const newWall = Array(map.array[y].length).fill(0);
-                    newWall[x] = 1;
-
-                    map.array.push(newWall);
-                } else {
-                    map.array[y + 1][x] = 1;
+        
+        // @TODO TIMER追加, 掘る動作追加, ピッケル数表示追加, 衝突判定追加
+        let a = performance.now();
+        let c = performance.now();
+        const render = () => {
+            
+            let b = performance.now();
+            if (b - a > 300) {
+                const { routes } = Map.getAllRoutes(map.array, enemy.position, player.position, firstAreaSafeId);
+                if (routes.length > 1) {
+                    enemy.position = Map.getRoutesToGo(routes)[1].position;
                 }
 
-            } else if (e.key === 'd') {
-                const [y, x] = player.position;
-
-                if (x === map.array[y].length - 1) {
-                    for (let i = map.array.length; i--;) {
-                        if (i === player.position[0]) {
-                            map.array[i].push(1);
-                        } else {
-                            map.array[i].push(0);
-                        }
-                    }
-                } else {
-                    map.array[y][x + 1] = 1;
+                a = performance.now();
+            }
+            if (b - c > 400) {
+                const { routes } = Map.getAllRoutes(map.array, enemy2.position, player.position, firstAreaSafeId);
+                if (routes.length > 1) {
+                    enemy2.position = Map.getRoutesToGo(routes)[1].position;
                 }
+
+                c = performance.now();
             }
 
             const pseudoPlayerPosition: Position = [mapRange[0] * cellSize, mapRange[1] * cellSize];
             const pseudoEnemyDistance: Position = getDistance(player.position, enemy.position, mapRange);
             const pseudoEnemyPosition: Position = [pseudoEnemyDistance[0] * cellSize, pseudoEnemyDistance[1] * cellSize];
-
-            map.render(appCtx, cutArrayMap(map.array, player.position, mapRange));
+            const pseudoEnemyDistance2: Position = getDistance(player.position, enemy2.position, mapRange);
+            const pseudoEnemyPosition2: Position = [pseudoEnemyDistance2[0] * cellSize, pseudoEnemyDistance2[1] * cellSize];
+            map.render(appCtx, Map.cutArrayMap(map.array, player.position, mapRange));
             player.render(appCtx, pseudoPlayerPosition);
             enemy.render(appCtx, pseudoEnemyPosition);
-        });
+            enemy2.render(appCtx, pseudoEnemyPosition2);
+
+            requestAnimationFrame(render);
+        };
+
+        render();
     }, []);
 
     return (
