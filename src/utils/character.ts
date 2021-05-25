@@ -4,6 +4,7 @@ export class Character {
     name: string;
     size: number;
     position: Position;
+    shovelGauge = 100;
 
     constructor(name: string, size: number, position: Position) {
         this.name = name;
@@ -22,20 +23,20 @@ export class Controller {
     targetCharacter: Character;
     characters: Character[];
     map: Map;
-    characterControlEvent: (e: KeyboardEvent) => void;
 
     constructor (targetCharacter: Character, characters: Character[], map: Map) {
         this.targetCharacter = targetCharacter;
         this.characters = characters;
         this.map = map;
-        this.characterControlEvent = this.characterControl.bind(this);
     }
 
-    setControlEvent() {
-        window.addEventListener('keydown', this.characterControlEvent);
+    autoRecoverTargetCharactersShovelGauge(timeout: number) {
+        setInterval(() => {
+            this.targetCharacter.shovelGauge++;
+        }, timeout);
     }
-    unsetControlEvent() {
-        window.removeEventListener('keydown', this.characterControlEvent);
+    setKeydownEvent() {
+        window.addEventListener('keydown', this.characterControlByKeydown.bind(this));
     }
     moveTargetCharacter(direction: Direction) {
         if (direction === 'top') {
@@ -68,7 +69,7 @@ export class Controller {
             }
         }
     }
-    characterControl(e: KeyboardEvent) {
+    characterControlByKeydown(e: KeyboardEvent) {
         if (e.key === 'ArrowUp') {
             this.moveTargetCharacter('top');
         } else if (e.key === 'ArrowRight') {
@@ -77,14 +78,18 @@ export class Controller {
             this.moveTargetCharacter('bottom');
         } else if (e.key === 'ArrowLeft') {
             this.moveTargetCharacter('left');
-        } else if (e.key === 'w') {
+        } else if (e.key === 'w' && this.targetCharacter.shovelGauge > 0) {
             this.breakWall('top');
-        } else if (e.key === 'd') {
+            this.targetCharacter.shovelGauge--;
+        } else if (e.key === 'd' && this.targetCharacter.shovelGauge > 0) {
             this.breakWall('right');
-        } else if (e.key === 's') {
+            this.targetCharacter.shovelGauge--;
+        } else if (e.key === 's' && this.targetCharacter.shovelGauge > 0) {
             this.breakWall('bottom');
-        } else if (e.key === 'a') {
+            this.targetCharacter.shovelGauge--;
+        } else if (e.key === 'a' && this.targetCharacter.shovelGauge > 0) {
             this.breakWall('left');
+            this.targetCharacter.shovelGauge--;
         }
     }
     shiftAllCharacter(direction: Direction) {

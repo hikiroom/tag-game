@@ -10,6 +10,8 @@ import { firstArea, firstAreaInfo, firstAreaSafeId } from '@/constants/map';
 
 const Game = () => {
     const app = useRef<HTMLCanvasElement>(null);
+    const [timer, setTimer] = useState(0);
+    const [shovelGauge, setShovelGauge] = useState(0);
 
     useEffect(() => {
         if (!app.current) {
@@ -23,54 +25,56 @@ const Game = () => {
 
         const windowInnerHeight = window.innerHeight;
         const cellSize = Math.ceil(windowInnerHeight / 13);
-
         app.current.height = windowInnerHeight;
         app.current.width = cellSize * 7;
 
         const player = new Character(getRandomName(), cellSize, [1, 0]);
-        const enemy = new Character('👹', cellSize, [1, 2]);
-        const enemy2 = new Character('🤡', cellSize, [8, 9]);
+        const enemy = new Character('👹', cellSize, [1, 9]);
         const map = new Map(firstArea, cellSize, firstAreaInfo);
         const mapRange: MapRange = [Math.trunc(windowInnerHeight / cellSize / 2), 3];
-        const playerController = new Controller(player, [player, enemy, enemy2], map);
-        
-        playerController.setControlEvent();
+        const playerController = new Controller(player, [player, enemy], map);
 
-        
-        // @TODO TIMER追加, 掘る動作追加, ピッケル数表示追加, 衝突判定追加
-        let a = performance.now();
-        let c = performance.now();
+        playerController.setKeydownEvent();
+        playerController.autoRecoverTargetCharactersShovelGauge(3000);
+
+        let enemyMoveTimer = performance.now();
+        let enemySpeed = 1000;
+        let renderFrame: number | null = null;
         const render = () => {
-            
-            let b = performance.now();
-            if (b - a > 300) {
+            setTimer(Math.trunc(performance.now() / 1000));
+            setShovelGauge(player.shovelGauge);
+
+            const nowTime = performance.now();
+            if (nowTime - enemyMoveTimer > enemySpeed) {
                 const { routes } = Map.getAllRoutes(map.array, enemy.position, player.position, firstAreaSafeId);
-                if (routes.length > 1) {
+                if (routes.length > 0) {
                     enemy.position = Map.getRoutesToGo(routes)[1].position;
                 }
 
-                a = performance.now();
+                enemyMoveTimer = nowTime;
             }
-            if (b - c > 400) {
-                const { routes } = Map.getAllRoutes(map.array, enemy2.position, player.position, firstAreaSafeId);
-                if (routes.length > 1) {
-                    enemy2.position = Map.getRoutesToGo(routes)[1].position;
-                }
 
-                c = performance.now();
-            }
+            map.render(appCtx, Map.cutArrayMap(map.array, player.position, mapRange));
 
             const pseudoPlayerPosition: Position = [mapRange[0] * cellSize, mapRange[1] * cellSize];
+            player.render(appCtx, pseudoPlayerPosition);
+
             const pseudoEnemyDistance: Position = getDistance(player.position, enemy.position, mapRange);
             const pseudoEnemyPosition: Position = [pseudoEnemyDistance[0] * cellSize, pseudoEnemyDistance[1] * cellSize];
-            const pseudoEnemyDistance2: Position = getDistance(player.position, enemy2.position, mapRange);
-            const pseudoEnemyPosition2: Position = [pseudoEnemyDistance2[0] * cellSize, pseudoEnemyDistance2[1] * cellSize];
-            map.render(appCtx, Map.cutArrayMap(map.array, player.position, mapRange));
-            player.render(appCtx, pseudoPlayerPosition);
             enemy.render(appCtx, pseudoEnemyPosition);
-            enemy2.render(appCtx, pseudoEnemyPosition2);
 
-            requestAnimationFrame(render);
+            const [py, px] = player.position;
+            const [ey, ex] = enemy.position;
+            const isHit = py === ey && px === ex;
+            if (isHit) {
+                if (typeof renderFrame === 'number') {
+                    window.cancelAnimationFrame(renderFrame);
+
+                    return;
+                }
+            }
+
+            renderFrame = window.requestAnimationFrame(render);
         };
 
         render();
@@ -81,6 +85,8 @@ const Game = () => {
             <Head>
                 <title>ゲーム画面 | 壁を掘って鬼から逃げろ！</title>
             </Head>
+            <p className={styles.shovelGauge}>⛏<span>x{shovelGauge}</span></p>
+            <p className={styles.timer}>TIME:<span>{timer}</span></p>
             <div className={styles.container}>
                 <canvas ref={app} className={styles.app}></canvas>
             </div>

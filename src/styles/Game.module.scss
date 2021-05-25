@@ -11,3 +11,29 @@
     height: 100%;
     object-fit: contain;
 }
+.timer {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    font-size: 18px;
+    background: #fff;
+    border-radius: 5px;
+    padding: 10px 20px;
+
+    > span {
+        margin-left: 10px;
+    }
+}
+.shovelGauge {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    font-size: 18px;
+    background: #fff;
+    border-radius: 5px;
+    padding: 10px 20px;
+
+    > span {
+        margin-left: 10px;
+    }
+}
