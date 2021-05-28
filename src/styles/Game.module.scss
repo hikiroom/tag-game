@@ -1,3 +1,5 @@
+@use './mixin.scss';
+
 .container {
     display: flex;
     justify-content: center;
@@ -16,9 +18,10 @@
     top: 10px;
     right: 10px;
     font-size: 18px;
-    background: #fff;
+    background: rgba(255, 255, 255, 0.8);
     border-radius: 5px;
     padding: 10px 20px;
+    box-shadow: 0 0 5px 0 rgba(0, 0, 0, .2);
 
     > span {
         margin-left: 10px;
@@ -29,11 +32,200 @@
     top: 10px;
     left: 10px;
     font-size: 18px;
-    background: #fff;
+    background: rgba(255, 255, 255, 0.8);
     border-radius: 5px;
     padding: 10px 20px;
+    box-shadow: 0 0 5px 0 rgba(0, 0, 0, .2);
 
     > span {
         margin-left: 10px;
+    }
+}
+.gameOverBox {
+    position: fixed;
+    bottom: 100%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #EEEEEE;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    flex-direction: column;
+
+    > *:not(:first-child) {
+        margin-top: 40px;
+    }
+    .gameOverText {
+        font-size: 24px;
+        font-weight: bold;
+        
+        @include mixin.mediaMin() {
+            font-size: 40px;
+        }
+    }
+
+    &.is-active {
+        animation: gameOver 1.8s ease-in-out 0s both;
+
+        @keyframes gameOver {
+            0% {
+                bottom: 100%;
+            }
+            20% {
+                bottom: 0%;
+            }
+            32% {
+                bottom: 2%;
+            }
+            52% {
+                bottom: 0%;
+            }
+            100% {
+                bottom: 0;
+            }
+        }
+    }
+}
+.retryBtn {
+    cursor: pointer;
+    border: 0;
+    display: block;
+    background: #0277BD;
+    color: #ffffff;
+    padding: 8px;
+    width: 100%;
+    max-width: 200px;
+    text-align: center;
+    border-radius: 10px;
+    margin: 0 auto;
+    font-size: 14px;
+
+    @include mixin.mediaMin {
+        max-width: 240px;
+        font-size: 22px;
+    }
+}
+.backBtn {
+    display: block;
+    border: 1px solid #0277BD;
+    color: #0277BD;
+    padding: 8px;
+    width: 100%;
+    max-width: 200px;
+    text-align: center;
+    border-radius: 10px;
+    margin: 0 auto;
+    font-size: 14px;
+
+    @include mixin.mediaMin {
+        max-width: 240px;
+        font-size: 22px;
+    }
+}
+.gameStartMessage {
+    font-size: 34px;
+    text-shadow:
+        -1px 0px 2px #fff,
+        1px  0 2px #fff,
+        0 1px 2px #fff,
+        0 -1px 2px #fff;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    font-weight: bold;
+    z-index: 2;
+    white-space: nowrap;
+    visibility: hidden;
+    
+    &.is-active {
+        visibility: visible;
+        animation: gameStart 1.8s ease-in-out 0s both;
+
+        @keyframes gameStart {
+            0% {
+                left: 100%;
+                opacity: 0;
+                transform: translateY(-50%) skew(-35deg);
+            }
+            20% {
+                transform: translateY(-50%) skew(-25deg);
+            }
+            30% {
+                opacity: 1;
+                left: calc(50% - 4.5em);
+                transform: translateY(-50%) skew(0);
+            }
+            70% {
+                opacity: 1;
+                left: calc(50% - 4.5em);
+            }
+            80% {
+                left: calc(50% - 4em);;
+                transform: translateY(-50%) skew(0);
+            }
+            100% {
+                opacity: 0;
+                left: -4.5em;
+                transform: translateY(-50%) skew(-10deg);
+            }
+        }
+    }
+}
+.gameMessage {
+    font-size: 34px;
+    text-shadow:
+        -1px 0px 2px #fff,
+        1px  0 2px #fff,
+        0 1px 2px #fff,
+        0 -1px 2px #fff;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    font-weight: bold;
+    z-index: 2;
+    white-space: nowrap;
+    visibility: hidden;
+    
+    &.is-active {
+        visibility: visible;
+        animation: gameStart 1.8s ease-in-out 0s both;
+
+        @keyframes gameStart {
+            0% {
+                left: 100%;
+                opacity: 0;
+                transform: translateY(-50%) skew(-35deg);
+            }
+            20% {
+                transform: translateY(-50%) skew(-25deg);
+            }
+            30% {
+                opacity: 1;
+                left: calc(50% - 4.5em);
+                transform: translateY(-50%) skew(0);
+            }
+            70% {
+                opacity: 1;
+                left: calc(50% - 4.5em);
+            }
+            80% {
+                left: calc(50% - 4em);;
+                transform: translateY(-50%) skew(0);
+            }
+            100% {
+                opacity: 0;
+                left: -4.5em;
+                transform: translateY(-50%) skew(-10deg);
+            }
+        }
+    }
+}
+.btnBox {
+    width: 100%;
+
+    > *:not(:first-child) {
+        margin-top: 20px;
     }
 }

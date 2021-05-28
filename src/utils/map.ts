@@ -1,13 +1,15 @@
 import { WALL, HAVE_BEEN_TO } from '@/constants/map';
 export class Map {
-    array: number[][]
-    cellSize: number
-    info: ArrayMapInfo[]
+    array: number[][];
+    cellSize: number;
+    info: ArrayMapInfo[];
+    range: MapRange;
 
-    constructor(arrayMap: number[][], cellSize: number, info: ArrayMapInfo[]) {
-        this.array = arrayMap;
+    constructor(arrayMap: number[][], cellSize: number, info: ArrayMapInfo[], range: MapRange) {
+        this.array = JSON.parse(JSON.stringify(arrayMap));
         this.cellSize = cellSize;
         this.info = info;
+        this.range = range;
     }
 
     getInfo(id: number): ArrayMapInfo {
@@ -54,8 +56,8 @@ export class Map {
                 const id = arrayMap[y][x];
                 const info = this.getInfo(id);
 
-                appCtx.fillStyle = info?.color ?? '#ffffff';
-                appCtx.strokeStyle = '#ffffff';
+                appCtx.fillStyle = info?.color ?? '#BCAAA4';
+                appCtx.strokeStyle = '#BCAAA4';
                 appCtx.fillRect(this.cellSize * x, this.cellSize * y, this.cellSize, this.cellSize);
                 appCtx.strokeRect(this.cellSize * x, this.cellSize * y, this.cellSize, this.cellSize);
             }
@@ -94,29 +96,34 @@ export class Map {
     /**
      * arrayMapを部分的に切り取る
      */
-    static cutArrayMap(arrayMap: ArrayMap, basePos: Position, range: MapRange) {
+    cutArrayMap(basePos: Position) {
         const [basePosY, basePosX] = basePos;
-        const [rangeY, rangeX] = range;
+        const [rangeY, rangeX] = this.range;
         const result = new Array(rangeY * 2 + 1).fill(null).map((item, i) => {
             return Array(rangeX * 2 + 1).fill(0);
         });
 
         for (let y = basePosY - rangeY, i = 0; y <= basePosY + rangeY; y++, i++) {
-            if (y < 0 || y >= arrayMap.length) {
+            if (y < 0 || y >= this.array.length) {
                 continue;
             }
             for (let x = basePosX - rangeX, j = 0; x <= basePosX + rangeX; x++, j++) {
-                if (x < 0 || x >= arrayMap[y].length) {
+                if (x < 0 || x >= this.array[y].length) {
                     continue;
                 }
 
-                result[i][j] = arrayMap[y][x];
+                result[i][j] = this.array[y][x];
             }
         }
 
         return result;
     }
     static getAllRoutes(arrayMap: ArrayMap, startPosition: Position, [endPositionY, endPositionX]: Position, safeId: number[]) {
+        const containsQueue = (queue: Route[], position: Position): boolean => {
+            return queue.some((route) => {
+                return route.position[0] === position[0] && route.position[1] === position[1];
+            });
+        };
         const search = (route: Route, queue: Route[] = [], routes: Route[] = []): BfsResult => {
             routes.push(route);
 
@@ -136,19 +143,19 @@ export class Map {
             const rightPosition: Position = [currentPosY, currentPosX + 1];
             const bottomPosition: Position = [currentPosY + 1, currentPosX];
             const leftPosition: Position = [currentPosY, currentPosX - 1];
-            if (Map.containsId(arrayMapClone, topPosition, safeId)) {
+            if (Map.containsId(arrayMapClone, topPosition, safeId) && !containsQueue(queue, topPosition)) {
                 const topRoute: Route = {position: topPosition, distance: distance + 1};
                 queue.push(topRoute);
             }
-            if (Map.containsId(arrayMapClone, rightPosition, safeId)) {
+            if (Map.containsId(arrayMapClone, rightPosition, safeId) && !containsQueue(queue, rightPosition)) {
                 const rightRoute: Route = {position: rightPosition, distance: distance + 1};
                 queue.push(rightRoute);
             }
-            if (Map.containsId(arrayMapClone, bottomPosition, safeId)) {
+            if (Map.containsId(arrayMapClone, bottomPosition, safeId) && !containsQueue(queue, bottomPosition)) {
                 const bottomRoute: Route = {position: bottomPosition, distance: distance + 1};
                 queue.push(bottomRoute);
             }
-            if (Map.containsId(arrayMapClone, leftPosition, safeId)) {
+            if (Map.containsId(arrayMapClone, leftPosition, safeId) && !containsQueue(queue, leftPosition)) {
                 const leftRoute: Route = {position: leftPosition, distance: distance + 1};
                 queue.push(leftRoute);
             }

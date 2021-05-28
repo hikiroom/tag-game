@@ -15,3 +15,16 @@ type BfsResult = {
     routes: Route[],
 };
 type Direction = 'top' | 'bottom' | 'left' | 'right';
+type InitOutput = {
+    appCtx: CanvasRenderingContext2D;
+    gameController: Controller;
+};
+type RenderProps = {
+    appCtx: CanvasRenderingContext2D;
+    player: Character;
+    map: Map;
+    gameController: Controller;
+    mapRange: MapRange;
+    createEnemyTimerId: number;
+};
+type CharacterType = 'player' | 'enemy';

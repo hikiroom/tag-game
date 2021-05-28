@@ -14,7 +14,7 @@ const Home = () => {
             <article className={styles.container}>
                 <h1 className={styles.hdgLv1}>壁を掘って鬼から逃げろ！</h1>
                 <p className={styles.icon}>⛏</p>
-                <Link  href="/game">
+                <Link href="/game">
                     <a className={styles.startBtn}>スタート</a>
                 </Link>
 

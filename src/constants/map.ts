@@ -9,12 +9,12 @@ export const firstAreaInfo: ArrayMapInfo[] = [
     {
         id: WALL,
         name: 'wall',
-        color: '#9d9d9d',
+        color: '#795548',
     },
     {
         id: 1,
         name: 'ground',
-        color: '#efefef',
+        color: '#D7CCC8',
     },
 ];
 export const firstAreaSafeId = [1];

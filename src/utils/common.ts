@@ -1,9 +1,20 @@
 /**
- * 適当なユーザー文字列を返す
+ * 適当なユーザー名を返す
  */
-export const getRandomName = (): string => {
+export const getRandomUserName = (): string => {
     const nameList = [
         '😀', '😃', '😄', '😁', '😆', '😅', '🤣', '😂', '🙂', '🙃', '😉', '😊', '😇', '🥰', '😍', '🤩', '😘', '😗', '😚', '😙', '🥲', '😋', '😛', '😜', '🤪', '😝', '🤑', '🤗', '🤭', '🤫', '🤔', '🤐', '🤨', '😐', '😑', '😶', '😏', '😒', '🙄', '😬', '🤥', '😌', '😔', '😪', '🤤', '😴', '😷', '🤒', '🤕', '🤢', '🤮', '🤧', '🥵', '🥶', '🥴', '😵', '🤯', '🤠', '🥳', '🥸', '😎', '🤓', '🧐', '😕', '😟', '🙁', '😮', '😯', '😲', '😳', '🥺', '😦', '😧', '😨', '😰', '😥', '😢', '😭', '😱', '😖', '😣', '😞', '😓', '😩', '😫', '🥱', '😤', '😡', '😠', '🤬', '😈', '👿', '💀',
+    ];
+    const randomIndex = Math.trunc(Math.random() * nameList.length);
+
+    return nameList[randomIndex];
+};
+/**
+ * 適当な敵名を返す
+ */
+export const getRandomEnemyName = (): string => {
+    const nameList = [
+        '👹', '🤡', '👺', '👁', '🌚',
     ];
     const randomIndex = Math.trunc(Math.random() * nameList.length);
 
@@ -13,13 +24,12 @@ export const getRandomName = (): string => {
 /**
  * basePosからtargetPosまでの距離を返す
  */
-export const getDistance = (basePos: Position, targetPos: Position, range: MapRange = [0, 0]): Position => {
+export const getDistance = (basePos: Position, targetPos: Position): Position => {
     const [basePosY, basePosX] = basePos;
     const [targetPosY, targetPosX] = targetPos;
-    const [rangeY, rangeX] = range;
 
-    const distanceY = targetPosY - basePosY + rangeY;
-    const distanceX = targetPosX - basePosX + rangeX;
+    const distanceY = targetPosY - basePosY;
+    const distanceX = targetPosX - basePosX;
 
     return [distanceY, distanceX];
 };
