@@ -153,7 +153,9 @@ const Game = () => {
                 onClick={
                     (direction):void => {
                         if (gameController && gameController.player.shovelGauge > 0) {
-                            gameController.breakWall(direction);
+                            gameController.breakWall(direction, ()=> {
+                                gameController.player.shovelGauge--;
+                            });
                         }
                     }
                 }
