@@ -1,5 +1,5 @@
-import { WALL, HAVE_BEEN_TO } from '@/constants/map';
-export class Map {
+import { HAVE_BEEN_TO } from '@/constants/map';
+export class GameMap {
     array: number[][];
     cellSize: number;
     info: ArrayMapInfo[];
@@ -143,19 +143,19 @@ export class Map {
             const rightPosition: Position = [currentPosY, currentPosX + 1];
             const bottomPosition: Position = [currentPosY + 1, currentPosX];
             const leftPosition: Position = [currentPosY, currentPosX - 1];
-            if (Map.containsId(arrayMapClone, topPosition, safeId) && !containsQueue(queue, topPosition)) {
+            if (GameMap.containsId(arrayMapClone, topPosition, safeId) && !containsQueue(queue, topPosition)) {
                 const topRoute: Route = {position: topPosition, distance: distance + 1};
                 queue.push(topRoute);
             }
-            if (Map.containsId(arrayMapClone, rightPosition, safeId) && !containsQueue(queue, rightPosition)) {
+            if (GameMap.containsId(arrayMapClone, rightPosition, safeId) && !containsQueue(queue, rightPosition)) {
                 const rightRoute: Route = {position: rightPosition, distance: distance + 1};
                 queue.push(rightRoute);
             }
-            if (Map.containsId(arrayMapClone, bottomPosition, safeId) && !containsQueue(queue, bottomPosition)) {
+            if (GameMap.containsId(arrayMapClone, bottomPosition, safeId) && !containsQueue(queue, bottomPosition)) {
                 const bottomRoute: Route = {position: bottomPosition, distance: distance + 1};
                 queue.push(bottomRoute);
             }
-            if (Map.containsId(arrayMapClone, leftPosition, safeId) && !containsQueue(queue, leftPosition)) {
+            if (GameMap.containsId(arrayMapClone, leftPosition, safeId) && !containsQueue(queue, leftPosition)) {
                 const leftRoute: Route = {position: leftPosition, distance: distance + 1};
                 queue.push(leftRoute);
             }
@@ -187,7 +187,7 @@ export class Map {
 
             for (let i = currentIndex; i--;) {
                 const nextRoutes = routes[i];
-                if (Map.isAdjacent(currentRoute.position, nextRoutes.position)) {
+                if (GameMap.isAdjacent(currentRoute.position, nextRoutes.position)) {
                     return move(i, acc);
                 }
             }

@@ -12,6 +12,4 @@ if (firebase.apps.length === 0) {
     });
 }
 
-const db = firebase.firestore();
-
-export default db;
+export const db = firebase.firestore();

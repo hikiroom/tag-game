@@ -1,12 +1,7 @@
 import { useState, useEffect } from 'react';
-import db from '@/utils/firebase';
+import { db } from '@/utils/firebase';
 
-type Ranking = {
-    name: string,
-    time: number,
-};
-
-const useRanking = (): Ranking[] => {
+export const useRanking = (): Ranking[] => {
     const [ranking, setRanking] = useState<Ranking[]>([]);
 
     useEffect(() => {
@@ -21,5 +16,3 @@ const useRanking = (): Ranking[] => {
 
     return ranking;
 };
-
-export default useRanking;

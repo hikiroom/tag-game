@@ -1,14 +1,20 @@
 import styles from '@/styles/Game.module.scss'
+
 import Head from 'next/head'
-import Link from 'next/link';
+import PrimaryBtn from '@/components/primaryBtn';
+import LinkBtn from '@/components/linkBtn';
+import StateBox from '@/components/stateBox';
+import CrossController from '@/components/crossController';
+
 import { useState, useEffect, useRef } from 'react';
 
-import db from '@/utils/firebase';
 import { firstAreaSafeId } from '@/constants/map';
-import { Map } from '@/utils/map';
+import { GameMap } from '@/utils/map';
 import { Character } from '@/utils/character';
 import { gameInitializer, gameRenderer } from '@/utils/game';
 import { getRandomEnemyName, getDistance } from '@/utils/common';
+import { Controller } from '@/utils/controller';
+import { db } from '@/utils/firebase';
 
 const Game = () => {
     const app = useRef<HTMLCanvasElement>(null);
@@ -18,6 +24,7 @@ const Game = () => {
     const [gameOverFlag, setGameOverFlag] = useState(false);
     const [gameStartFlag, setGameStartFlag] = useState(false);
     const [gameMessageFlag, setGameMessageFlag] = useState(false);
+    const [gameController, setGameController] = useState<Controller|null>(null);
 
     useEffect(() => {
         if (app.current) {
@@ -27,6 +34,7 @@ const Game = () => {
             } = gameInitializer(app.current);
             const { player, map } = gameController;
 
+            setGameController(gameController);
             setGameStartFlag(true);
             setGameOverFlag(false);
             gameRenderer({
@@ -40,9 +48,9 @@ const Game = () => {
                         const maxMoveSpeed = 200;
                         const moveTime = i < 8 ? 1000 - (i  * 100) : maxMoveSpeed;
                         if (timestamp - enemy.timer >= moveTime) {
-                            const { routes } = Map.getAllRoutes(map.array, enemy.position, player.position, firstAreaSafeId);
+                            const { routes } = GameMap.getAllRoutes(map.array, enemy.position, player.position, firstAreaSafeId);
                             if (routes.length > 1) {
-                                enemy.position = Map.getRoutesToGo(routes)[1].position;
+                                enemy.position = GameMap.getRoutesToGo(routes)[1].position;
                             }
                             enemy.timer = performance.now();
                         }
@@ -87,7 +95,7 @@ const Game = () => {
                             gameController.stopAutoRecoverShovelGauge();
 
                             setGameOverFlag(true);
-                            // db.collection('ranking').add({name: player.name, time});
+                            db.collection('ranking').add({name: player.name, time: nowTime});
                         }
                     });
                 },
@@ -100,20 +108,56 @@ const Game = () => {
             <Head>
                 <title>ゲーム画面 | 壁を掘って鬼から逃げろ！</title>
             </Head>
-            <p onAnimationEnd={() => {setGameStartFlag(false)}} className={styles.gameStartMessage + (gameStartFlag ? ` ${styles['is-active']}` : '')}>鬼から逃げろ！！🏃</p>
-            <p onAnimationEnd={() => {setGameMessageFlag(false)}} className={styles.gameMessage + (gameMessageFlag ? ` ${styles['is-active']}` : '')}>鬼が現れたぞ気をつけろ！😱</p>
+            <p onAnimationEnd={() => {setGameStartFlag(false)}} className={styles.gameMessage + (gameStartFlag ? ` ${styles['is-active']}` : '')}>壁を掘って鬼から逃げろ！！🏃</p>
+            <p onAnimationEnd={() => {setGameMessageFlag(false)}} className={styles.gameMessage + (gameMessageFlag ? ` ${styles['is-active']}` : '')}>新しい鬼が出てきたぞ！😱</p>
             <div className={styles.gameOverBox + (gameOverFlag ? ` ${styles['is-active']}` : '')}>
                 <p className={styles.gameOverText}>GAME OVER</p>
-                <p>あなたは{viewTimer}秒間、鬼から逃げました！</p>
+                <p>鬼から{viewTimer}秒間逃げました！</p>
                 <div className={styles.btnBox}>
-                    <button type="button" onClick={() => {setResetCounter((oldCounter) => oldCounter + 1)}} className={styles.retryBtn}>リトライ</button>
-                    <Link href="/">
-                        <a className={styles.backBtn}>トップページに戻る</a>
-                    </Link>
+                    <PrimaryBtn onClick={() => {setResetCounter((oldCounter) => oldCounter + 1)}}>
+                        リトライ
+                    </PrimaryBtn>
+                    <LinkBtn href="/" type="skeleton">トップページに戻る</LinkBtn>
                 </div>
             </div>
-            <p className={styles.shovelGauge}>⛏<span>×{viewShovelGauge}</span></p>
-            <p className={styles.timer}>⏱<span>{viewTimer}</span></p>
+            <StateBox icon="⛏" text={`×${viewShovelGauge}`} is="right" />
+            <StateBox icon="⏱" text={String(viewTimer)} is="left" />
+            <CrossController
+                is="left"
+                icon="🏃"
+                labelOption={
+                    {
+                        top: '上に移動する',
+                        right: '右に移動する',
+                        bottom: '下に移動する',
+                        left: '左に移動する',
+                    }
+                }
+                onClick={
+                    (direction):void => {
+                        gameController?.movePlayer(direction);
+                    }
+                }
+            />
+            <CrossController
+                is="right"
+                icon="⛏"
+                labelOption={
+                    {
+                        top: '上の壁を掘る',
+                        right: '右の壁を掘る',
+                        bottom: '下の壁を掘る',
+                        left: '左の壁を掘る',
+                    }
+                }
+                onClick={
+                    (direction):void => {
+                        if (gameController && gameController.player.shovelGauge > 0) {
+                            gameController.breakWall(direction);
+                        }
+                    }
+                }
+            />
             <div className={styles.container}>
                 <canvas ref={app} className={styles.app}></canvas>
             </div>

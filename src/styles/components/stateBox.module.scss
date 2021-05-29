@@ -1,0 +1,30 @@
+@use '../mixin.scss';
+@use '../constants.scss' as *;
+
+.stateBox {
+    position: fixed;
+    top: 10px;
+    font-size: 18px;
+    background: $COLOR_WHITE_OPACITY;
+    border-radius: 5px;
+    padding: 10px 20px;
+    box-shadow: 0 0 5px 0 $COLOR_BLACK_OPACITY;
+
+    > span {
+        margin-left: 10px;
+    }
+    &.is_left {
+        left: 10px;
+
+        @include mixin.mediaMin() {
+            left: 40px;
+        }
+    }
+    &.is_right {
+        right: 10px;
+
+        @include mixin.mediaMin() {
+            right: 40px;
+        }
+    }
+}

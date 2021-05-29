@@ -1,7 +1,8 @@
 import Head from 'next/head';
 import styles from '@/styles/Home.module.scss';
-import Link from 'next/link';
-import useRanking from '@/hooks/useRanking';
+import { useRanking } from '@/hooks/useRanking';
+
+import LinkBtn from '@/components/linkBtn';
 
 const Home = () => {
     const ranking = useRanking();
@@ -14,9 +15,7 @@ const Home = () => {
             <article className={styles.container}>
                 <h1 className={styles.hdgLv1}>壁を掘って鬼から逃げろ！</h1>
                 <p className={styles.icon}>⛏</p>
-                <Link href="/game">
-                    <a className={styles.startBtn}>スタート</a>
-                </Link>
+                <LinkBtn href="/game">スタート</LinkBtn>
 
                 <section className={styles.section}>
                     <h2 className={styles.hdgLv2}>このゲームは何？👀</h2>
@@ -25,8 +24,8 @@ const Home = () => {
                 <section className={styles.section}>
                     <h2 className={styles.hdgLv2}>遊び方🕹</h2>
                     <p><em>追いかけてくる鬼からとにかく逃げましょう！</em></p>
-                    <p>左下のコントローラーで壁を掘り、右下のコントローラーで移動ができます。<br />連続して壁を掘りすすめると一時的に壁を掘ることができなくなるので注意が必要です。</p>
-                    <p><small><span>※</span>PCの場合はWASDキーが左下、矢印キーが右下のコントローラーと対応しています。</small></p>
+                    <p>左下のコントローラーで移動、右下のコントローラーで壁を掘ることができます。<br />連続して壁を掘りすすめると一時的に壁を掘ることができなくなるので注意しましょう。</p>
+                    <p><small><span>※</span>PCの場合はWASDキーで移動、矢印キーで壁を掘ることもできます。</small></p>
                 </section>
                 <section className={styles.section}>
                     <h2 className={styles.hdgLv2}>ランキング👑</h2>

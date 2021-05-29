@@ -28,3 +28,17 @@ type RenderProps = {
     createEnemyTimerId: number;
 };
 type CharacterType = 'player' | 'enemy';
+type GameRendererProps = {
+    init: () => void;
+    willRender: (timestamp: number, gameRendererState: GameRendererState) => void;
+    render: (timestamp: number, gameRendererState: GameRendererState) => void;
+    didRender: (timestamp: number, gameRendererState: GameRendererState) => void;
+};
+type GameRendererState = {
+    renderStartTime: number,
+    isRenderCycleRunning: boolean,
+};
+type Ranking = {
+    name: string,
+    time: number,
+};

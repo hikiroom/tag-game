@@ -1,4 +1,5 @@
 @use './mixin.scss';
+@use './constants.scss' as *;
 
 .container {
     padding: 40px 20px 20px;
@@ -38,8 +39,8 @@
 }
 .startBtn {
     display: block;
-    background: #0277BD;
-    color: #ffffff;
+    background: $COLOR_BLUE;
+    color: $COLOR_WHITE;
     padding: 8px;
     max-width: 200px;
     text-align: center;
@@ -60,10 +61,10 @@
         }
 
         em {
-            color: #E65100;
+            color: $COLOR_RED;
         }
         small {
-            color: #757575;
+            color: $COLOR_GRAY_DARK;
             font-size: 12px;
 
             span {
@@ -83,7 +84,7 @@
     p {
         text-align: center;
         small {
-            color: #757575;
+            color: $COLOR_GRAY_DARK;
             font-size: 12px;
         }
     }

@@ -1,21 +1,26 @@
-import { getRandomUserName, getRandomEnemyName, getDistance } from '@/utils/common';
-import { Map } from '@/utils/map';
-import { Character, Controller } from '@/utils/character';
-import { firstArea, firstAreaInfo, firstAreaSafeId } from '@/constants/map';
+import { getRandomUserName, getRandomEnemyName } from '@/utils/common';
+import { GameMap } from '@/utils/map';
+import { Controller } from '@/utils/controller';
+import { Character } from '@/utils/character';
+import { firstArea, firstAreaInfo } from '@/constants/map';
 
+/**
+ * ゲームの初期化処理
+ */
 export const gameInitializer = (app: HTMLCanvasElement): InitOutput => {
     const appCtx = app.getContext('2d');
     if (!appCtx) {
         throw new Error('do not ready appCtx.');
     }
 
-    const windowInnerHeight = window.innerHeight;
+    const dpr = window.devicePixelRatio;
+    const windowInnerHeight = window.innerHeight * dpr;
     const cellSize = Math.ceil(windowInnerHeight / 13);
     app.height = windowInnerHeight;
     app.width = cellSize * 7;
 
     const mapRange: MapRange = [6, 3];
-    const map = new Map(firstArea, cellSize, firstAreaInfo, mapRange);
+    const map = new GameMap(firstArea, cellSize, firstAreaInfo, mapRange);
     const player = new Character(getRandomUserName(), cellSize, [1, 0], 'player');
     const enemy = new Character(getRandomEnemyName(), cellSize, [2, 2], 'enemy');
     const gameController = new Controller(player, [player, enemy], map);
@@ -25,16 +30,9 @@ export const gameInitializer = (app: HTMLCanvasElement): InitOutput => {
         gameController,
     }
 };
-type GameRendererProps = {
-    init: () => void;
-    willRender: (timestamp: number, gameRendererState: GameRendererState) => void;
-    render: (timestamp: number, gameRendererState: GameRendererState) => void;
-    didRender: (timestamp: number, gameRendererState: GameRendererState) => void;
-}
-type GameRendererState = {
-    renderStartTime: number,
-    isRenderCycleRunning: boolean,
-}
+/**
+ * ゲームのレンダリングに必要な一連の処理
+ */
 export const gameRenderer = ({
         init,
         willRender,

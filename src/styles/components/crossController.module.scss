@@ -1,0 +1,92 @@
+@use '../mixin.scss';
+@use '../constants.scss' as *;
+
+.crossController {
+    position: fixed;
+    bottom: 20px;
+    width: 130px;
+    height: 130px;
+    background: $COLOR_WHITE_OPACITY;
+    border-radius: 50%;
+    box-shadow: 0 0 5px 0 $COLOR_BLACK_OPACITY;
+    @include mixin.mediaMin() {
+        bottom: 40px;
+    }
+
+    > button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 5px;
+        background: $COLOR_WHITE_OPACITY;
+        position: absolute;
+        cursor: pointer;
+
+        &::before {
+            content: "";
+            display: block;
+            width: 24%;
+            height: 24%;
+            border-top: 2px solid $COLOR_BLACK;
+            border-right: 2px solid $COLOR_BLACK;
+        }
+    }
+    .icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 30px;
+        width: 30px;
+        position: absolute;
+        top: calc(50% - 15px);
+        left: calc(50% - 15px);
+    }
+    .topButton {
+        top: 10px;
+        left: calc(50% - 15px);
+
+        &::before {
+            transform: rotate(315deg);
+        }
+    }
+    .rightButton {
+        top: calc(50% - 15px);
+        left: calc(100% - 40px);
+
+        &::before {
+            transform: rotate(45deg);
+        }
+    }
+    .bottomButton {
+        top: calc(100% - 40px);
+        left: calc(50% - 15px);
+
+        &::before {
+            transform: rotate(135deg);
+        }
+    }
+    .leftButton {
+        top: calc(50% - 15px);
+        left: 10px;
+
+        &::before {
+            transform: rotate(225deg);
+        }
+    }
+    &.is_left {
+        left: 10px;
+
+        @include mixin.mediaMin() {
+            left: 40px;
+        }
+    }
+    &.is_right {
+        right: 10px;
+
+        @include mixin.mediaMin() {
+            right: 40px;
+        }
+    }
+}
