@@ -21,8 +21,8 @@ export const gameInitializer = (app: HTMLCanvasElement): InitOutput => {
 
     const mapRange: MapRange = [6, 3];
     const map = new GameMap(firstArea, cellSize, firstAreaInfo, mapRange);
-    const player = new Character(getRandomUserName(), cellSize, [1, 0], 'player');
-    const enemy = new Character(getRandomEnemyName(), cellSize, [2, 2], 'enemy');
+    const player = new Character(getRandomUserName(), cellSize, [0, 0], 'player');
+    const enemy = new Character(getRandomEnemyName(), cellSize, [2, 3], 'enemy');
     const gameController = new Controller(player, [player, enemy], map);
 
     return {
